@@ -1,0 +1,10 @@
+libout/
+obj/
+out/
+
+# vscode
+.vscode
+.history
+
+# MacOS
+.DS_Store
