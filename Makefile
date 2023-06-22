@@ -50,4 +50,4 @@ lib: $(OUTPUT)
 .PHONY: clean
 
 clean:
-	rm -rf *.o *.a *~ $(ODIR) $(OUTDIR) $(TOUTPUT) $(OUTDIR) $(OUTDIR)
+	rm -rf *.o *.a *~ $(ODIR) $(OUTDIR) $(TOUTPUT) $(OUTDIR) $(OUTDIR) $(LIBOUT)
