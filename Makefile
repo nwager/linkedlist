@@ -5,6 +5,7 @@ ODIR:=obj
 OUTDIR:=out
 TDIR:=test
 CFLAGS:=-Wall -Wpedantic -Wextra -Werror -g -I$(IDIR)
+LIBOUT:=libout
 
 _DEPS:=linkedlist.h
 DEPS:=$(patsubst %,$(IDIR)/%,$(_DEPS))
@@ -18,6 +19,8 @@ OUTPUT:=$(OUTDIR)/$(_OUT)
 TOUTPUT:=$(OUTDIR)/test_linkedlist.out
 
 # targets
+
+all: $(OUTPUT)
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
 	mkdir -p $(ODIR)
@@ -41,8 +44,8 @@ runleak: test
 	# Tests passed
 
 lib: $(OUTPUT)
-	mkdir -p libout
-	cp $(OUTPUT) $(DEPS) libout
+	mkdir -p $(LIBOUT)
+	cp $(OUTPUT) $(DEPS) $(LIBOUT)
 
 .PHONY: clean
 
