@@ -1,21 +1,21 @@
-CC=gcc
-IDIR=include
-SDIR=src
-ODIR=obj
-OUTDIR=out
-TDIR=test
-CFLAGS=-Wall -Wpedantic -Wextra -Werror -g -I$(IDIR)
+CC:=gcc
+IDIR:=include
+SDIR:=src
+ODIR:=obj
+OUTDIR:=out
+TDIR:=test
+CFLAGS:=-Wall -Wpedantic -Wextra -Werror -g -I$(IDIR)
 
-_DEPS=linkedlist.h
-DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
+_DEPS:=linkedlist.h
+DEPS:=$(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJS=linkedlist.o
-OBJS=$(patsubst %,$(ODIR)/%,$(_OBJS))
+_OBJS:=linkedlist.o
+OBJS:=$(patsubst %,$(ODIR)/%,$(_OBJS))
 
-_OUT=liblinkedlist.a
-OUTPUT=$(OUTDIR)/$(_OUT)
+_OUT:=liblinkedlist.a
+OUTPUT:=$(OUTDIR)/$(_OUT)
 
-TOUTPUT=$(OUTDIR)/test_linkedlist.out
+TOUTPUT:=$(OUTDIR)/test_linkedlist.out
 
 # targets
 

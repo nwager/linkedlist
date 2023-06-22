@@ -1,6 +1,9 @@
 libout/
 obj/
 out/
+*.a
+*.o
+*.out
 
 # vscode
 .vscode
