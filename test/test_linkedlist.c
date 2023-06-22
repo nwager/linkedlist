@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stdbool.h>
 
+typedef struct linkedlist_iter iter;
+
 // tests
 void test_int(void);
 void test_string(void);
@@ -113,33 +115,61 @@ void test_iter(void) {
   }
 
   // test gets
-  lliter_init(ll);
+  iter *it = lliter_alloc(ll);
   size_t i;
-  for (i = 0; lliter_hasnext(ll); i++) {
-    assert(i == (size_t)lliter_next(ll));
+  for (i = 0; lliter_hasnext(it); i++) {
+    assert(i == (size_t)lliter_next(it));
   }
   assert(i == NUM_INT);
 
+  lliter_free(it);
+
   // do removes
-  lliter_init(ll);
-  for (i = 0; lliter_hasnext(ll); i++) {
-    size_t v = (size_t)lliter_next(ll);
+  it = lliter_alloc(ll);
+  for (i = 0; lliter_hasnext(it); i++) {
+    size_t v = (size_t)lliter_next(it);
     if (i == 0 || i == NUM_INT/2 || i == NUM_INT-1) {
-      v = (size_t)lliter_remove(ll); // should assign to same value
+      v = (size_t)lliter_remove(it); // should assign to same value
     }
     assert(v == i);
   }
+  lliter_free(it);
 
   // verify removes
-  lliter_init(ll);
+  it = lliter_alloc(ll);
   for (i = 0; i < NUM_INT; i++) {
     if (i == 0 || i == NUM_INT/2 || i == NUM_INT-1)
       continue;
-    assert(lliter_hasnext(ll));
-    assert(i == (size_t)lliter_next(ll));
+    assert(lliter_hasnext(it));
+    assert(i == (size_t)lliter_next(it));
   }
-  assert(!lliter_hasnext(ll));
+  assert(!lliter_hasnext(it));
+  lliter_free(it);
 
+  linkedlist_free(ll, NULL);
+
+  // test nested iter
+  ll = linkedlist_alloc();
+  for (size_t i = 0; i < NUM_INT; i++) {
+    linkedlist_push(ll, (void *)i);
+  }
+  iter *it1;
+  iter *it2;
+  it1 = lliter_alloc(ll);
+  for (i = 0; lliter_hasnext(it1); i++) {
+    size_t data = (size_t)lliter_next(it1);
+    assert(data == i);
+    it2 = lliter_alloc(ll);
+    size_t j;
+    for (j = 0; lliter_hasnext(it2); j++) {
+      data = (size_t)lliter_next(it2);
+      assert(data == j);
+    }
+    assert(j == NUM_INT);
+    lliter_free(it2);
+  }
+  assert(i == NUM_INT);
+  lliter_free(it1);
   linkedlist_free(ll, NULL);
 }
 
@@ -164,13 +194,15 @@ void test_removeall(void) {
     linkedlist_push(ll, (void *)i);
   }
   assert(linkedlist_size(ll) == 5);
-  int i = 0;
-  for (lliter_init(ll); lliter_hasnext(ll); i++) {
-    lliter_next(ll);
-    lliter_remove(ll);
+  int i;
+  iter *it = lliter_alloc(ll);
+  for (i = 0; lliter_hasnext(it); i++) {
+    lliter_next(it);
+    lliter_remove(it);
   }
   assert(i == NUM_INT);
   assert(linkedlist_size(ll) == 0);
+  lliter_free(it);
   linkedlist_free(ll, NULL);
 }
 
@@ -189,10 +221,12 @@ void print_data_string(void *data) {
 void print_list(struct linkedlist *ll, void (*print_data)(void*)) {
   printf("ll of size %d: [", linkedlist_size(ll));
   bool started = false;
-  for (lliter_init(ll); lliter_hasnext(ll);) {
+  iter *it = lliter_alloc(ll);
+  while (lliter_hasnext(it)) {
     if (started) printf(", ");
     started = true;
-    print_data(lliter_next(ll));
+    print_data(lliter_next(it));
   }
+  lliter_free(it);
   printf("]\n");
 }

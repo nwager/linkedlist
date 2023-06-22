@@ -9,6 +9,7 @@ struct linkedlist_node {
 };
 
 struct linkedlist_iter {
+  struct linkedlist *ll;
   struct linkedlist_node *next;
   struct linkedlist_node *last;
 };
@@ -16,7 +17,6 @@ struct linkedlist_iter {
 struct linkedlist {
   struct linkedlist_node *head;
   struct linkedlist_node *tail;
-  struct linkedlist_iter it;
   unsigned int size;
 };
 
@@ -134,27 +134,34 @@ void *linkedlist_pop(struct linkedlist *ll) {
 
 // iterator
 
-void lliter_init(struct linkedlist *ll) {
-  ll->it.next = ll->head;
-  ll->it.last = NULL;
+struct linkedlist_iter *lliter_alloc(struct linkedlist *ll) {
+  struct linkedlist_iter *it = malloc(sizeof(struct linkedlist_iter));
+  it->ll = ll;
+  it->next = it->ll->head;
+  it->last = NULL;
+  return it;
 }
 
-bool lliter_hasnext(struct linkedlist *ll) {
-  return ll->it.next != NULL;
+void lliter_free(struct linkedlist_iter *it) {
+  free(it);
 }
 
-void *lliter_next(struct linkedlist *ll) {
-  assert(lliter_hasnext(ll));
-  ll->it.last = ll->it.next;
-  ll->it.next = ll->it.next->next;
-  return ll->it.last->data;
+bool lliter_hasnext(struct linkedlist_iter *it) {
+  return it->next != NULL;
 }
 
-void *lliter_remove(struct linkedlist *ll) {
-  assert(ll->it.last != NULL && "Must be preceded by lliter_next()");
-  struct linkedlist_node *n = ll->it.last;
-  ll->it.last = NULL;
-  return remove_node(ll, n);
+void *lliter_next(struct linkedlist_iter *it) {
+  assert(lliter_hasnext(it));
+  it->last = it->next;
+  it->next = it->next->next;
+  return it->last->data;
+}
+
+void *lliter_remove(struct linkedlist_iter *it) {
+  assert(it->last != NULL && "Must be preceded by lliter_next()");
+  struct linkedlist_node *n = it->last;
+  it->last = NULL;
+  return remove_node(it->ll, n);
 }
 
 // helpers

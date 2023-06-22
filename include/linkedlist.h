@@ -14,6 +14,11 @@ typedef void (*data_free_fn)(void *);
 struct linkedlist;
 
 /**
+ * @brief Linked list iterator object.
+ */
+struct linkedlist_iter;
+
+/**
  * @brief Create an empty linked list.
  * 
  * @return struct linkedlist* Pointer to the allocated list.
@@ -80,36 +85,42 @@ extern void linkedlist_push(struct linkedlist *ll, void *data);
 extern void *linkedlist_pop(struct linkedlist *ll);
 
 /**
- * @brief Initialize the linked list iterator. Can be called multiple times where
- * each call resets the iterator to the beginning.
+ * @brief Creates a new linkedlist iterator positioned at the list start.
  * 
  * @param ll Pointer to linked list.
  */
-extern void lliter_init(struct linkedlist *ll);
+extern struct linkedlist_iter *lliter_alloc(struct linkedlist *ll);
+
+/**
+ * @brief Frees the iterator.
+ * 
+ * @param it Pointer to iterator.
+ */
+extern void lliter_free(struct linkedlist_iter *it);
 
 /**
  * @brief Check if the iterator can proceed to the next item, or if it has reached the end.
  * 
- * @param ll Pointer to linked list.
+ * @param it Pointer to iterator.
  * @return true if there is another item.
  * @return false if the iterator has reached the end of the list.
  */
-extern bool lliter_hasnext(struct linkedlist *ll);
+extern bool lliter_hasnext(struct linkedlist_iter *it);
 
 /**
- * @brief Get the next item of the iterator. Next item must exist.
+ * @brief Get the next item of the iterator. The item must exist.
  * 
- * @param ll Pointer to linked list.
+ * @param it Pointer to iterator.
  * @return void* List item.
  */
-extern void *lliter_next(struct linkedlist *ll);
+extern void *lliter_next(struct linkedlist_iter *it);
 
 /**
- * @brief Remove the current item of the iterator. Must be preceded by lliter_next(ll).
+ * @brief Remove the current item of the iterator. Must be preceded by lliter_next(it).
  * 
- * @param ll Pointer to linked list.
+ * @param it Pointer to iterator.
  * @return void* Removed list item.
  */
-extern void *lliter_remove(struct linkedlist *ll);
+extern void *lliter_remove(struct linkedlist_iter *it);
 
 #endif // LINKEDLIST_H
